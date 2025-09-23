@@ -6,6 +6,7 @@ import { useForm } from "@/hooks/use-form";
 import { useDebouncedEmailCheck } from "@/hooks/use-debounced-email-check";
 import { useState } from "react";
 import { signInWithMagicLink } from "@/lib/auth-client";
+import { Spinner } from "./ui/spinner";
 
 interface FormValues extends Record<string, unknown> {
   email: string;
@@ -89,13 +90,11 @@ export default function LoginForm() {
           value={values.email}
           onChange={(e) => handleEmailChange(e.target.value)}
           className={errors.email ? "border-red-500" : ""}
+          right={isChecking ? <Spinner /> : null}
         />
         {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
         {emailCheckError && (
           <p className="text-sm text-red-500">{emailCheckError}</p>
-        )}
-        {isChecking && (
-          <p className="text-sm text-gray-500">Checking email...</p>
         )}
         {emailExists === false && !isChecking && values.email && (
           <p className="text-sm text-blue-600">
