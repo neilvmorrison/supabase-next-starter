@@ -1,4 +1,5 @@
 import { AppSidebar } from "@/components/app-sidebar";
+import LogoutButton from "@/components/logout-button";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -13,9 +14,19 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { getCurrentUser } from "@/lib/auth";
+import { redirect } from "next/navigation";
 import { ReactNode } from "react";
 
-export default function Page({ children }: { children: ReactNode }) {
+export default async function DashboardLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) {
+    redirect("/authentication");
+  }
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -39,6 +50,7 @@ export default function Page({ children }: { children: ReactNode }) {
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
+          <LogoutButton className="ml-auto cursor-pointer" />
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4">{children}</div>
       </SidebarInset>

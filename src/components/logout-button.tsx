@@ -2,10 +2,18 @@
 
 import { signOut } from "@/lib/auth-client";
 import { Button } from "./ui/button";
+import { useRouter } from "next/navigation";
 
-export default function LogoutButton() {
+export default function LogoutButton({ className }: { className?: string }) {
+  const { replace } = useRouter();
+
+  async function handleSignout() {
+    const { error } = await signOut();
+    if (!error) replace("/authentication");
+  }
+
   return (
-    <Button variant="destructive" onClick={signOut}>
+    <Button variant="destructive" onClick={handleSignout} className={className}>
       Logout
     </Button>
   );
