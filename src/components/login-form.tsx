@@ -5,7 +5,6 @@ import { Label } from "./ui/label";
 import { useForm } from "@/hooks/use-form";
 import { useDebouncedEmailCheck } from "@/hooks/use-debounced-email-check";
 import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { signInWithMagicLink } from "@/lib/auth-client";
 
 interface FormValues extends Record<string, unknown> {
@@ -128,7 +127,11 @@ export default function LoginForm() {
         </>
       )}
 
-      <Button type="submit" disabled={isSubmitting || isChecking}>
+      <Button
+        type="submit"
+        disabled={isSubmitting || isChecking}
+        className="mt-4"
+      >
         {isSubmitting ? "Sending..." : "Get Link"}
       </Button>
     </form>
