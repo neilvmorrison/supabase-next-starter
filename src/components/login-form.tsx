@@ -7,6 +7,8 @@ import { useDebouncedEmailCheck } from "@/hooks/use-debounced-email-check";
 import { useState } from "react";
 import { signInWithMagicLink } from "@/lib/auth-client";
 import { Spinner } from "./ui/spinner";
+import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
+import Icon from "./ui/icons";
 
 interface FormValues extends Record<string, unknown> {
   email: string;
@@ -16,6 +18,9 @@ interface FormValues extends Record<string, unknown> {
 
 export default function LoginForm() {
   const [showNameFields, setShowNameFields] = useState(false);
+  const [showEmailScreen, setShowEmailScreen] = useState(false);
+  const [showErrorScreen, setShowErrorScreen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const { values, errors, isSubmitting, setValue, handleSubmit } =
     useForm<FormValues>({
@@ -35,7 +40,18 @@ export default function LoginForm() {
             last_name: values.lastName,
           };
         }
-        await signInWithMagicLink(values.email, new_user_creds);
+        const { error } = await signInWithMagicLink(
+          values.email,
+          new_user_creds
+        );
+        if (!error) {
+          setShowEmailScreen(true);
+        } else {
+          setErrorMessage(
+            error.message || "Failed to send magic link. Please try again."
+          );
+          setShowErrorScreen(true);
+        }
       },
       validate: (values) => {
         const newErrors: Partial<Record<keyof FormValues, string>> = {};
@@ -79,7 +95,28 @@ export default function LoginForm() {
     setValue("email", value);
   };
 
-  return (
+  if (showErrorScreen) {
+    return (
+      <div>
+        <Alert variant="destructive">
+          <Icon name="alert" size={24} asChild={true} />
+          <AlertTitle>Sign-in Error</AlertTitle>
+          <AlertDescription>{errorMessage}</AlertDescription>
+        </Alert>
+        <Button
+          onClick={() => {
+            setShowErrorScreen(false);
+            setErrorMessage("");
+          }}
+          className="mt-4 w-full"
+        >
+          Try Again
+        </Button>
+      </div>
+    );
+  }
+
+  return !showEmailScreen ? (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
@@ -143,5 +180,16 @@ export default function LoginForm() {
         {isSubmitting ? "Sending..." : "Get Link"}
       </Button>
     </form>
+  ) : (
+    <div>
+      <Alert variant="success">
+        <Icon name="email_check" size={24} asChild={true} />
+        <AlertTitle>Check your email!</AlertTitle>
+        <AlertDescription>
+          We sent an email to {values.email}, follow that link to sign into the
+          application
+        </AlertDescription>
+      </Alert>
+    </div>
   );
 }
