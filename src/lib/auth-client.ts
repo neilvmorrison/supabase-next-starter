@@ -12,15 +12,25 @@ export interface UserProfile {
 }
 
 export async function signInWithMagicLink(
-  email: string
+  email: string,
+  userData?: { first_name?: string; last_name?: string }
 ): Promise<{ error: Error | null }> {
   const supabase = createClient();
 
+  const options: { emailRedirectTo: string; data?: object } = {
+    emailRedirectTo: `${window.location.origin}/authentication/confirm`,
+  };
+
+  if (userData?.first_name || userData?.last_name) {
+    options.data = {
+      first_name: userData.first_name,
+      last_name: userData.last_name,
+    };
+  }
+
   const { error } = await supabase.auth.signInWithOtp({
     email,
-    options: {
-      emailRedirectTo: `${window.location.origin}/authentication/confirm`,
-    },
+    options,
   });
 
   return { error };

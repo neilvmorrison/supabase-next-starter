@@ -24,7 +24,17 @@ export default function LoginForm() {
         lastName: "",
       },
       onSubmit: async (values) => {
-        await signInWithMagicLink(values.email);
+        let new_user_creds:
+          | { first_name: string; last_name: string }
+          | undefined = undefined;
+
+        if (values.firstName && values.lastName) {
+          new_user_creds = {
+            first_name: values.firstName,
+            last_name: values.lastName,
+          };
+        }
+        await signInWithMagicLink(values.email, new_user_creds);
       },
       validate: (values) => {
         const newErrors: Partial<Record<keyof FormValues, string>> = {};
@@ -63,7 +73,6 @@ export default function LoginForm() {
     },
   });
 
-  // Sync the email from the debounced hook with the form
   const handleEmailChange = (value: string) => {
     setEmail(value);
     setValue("email", value);
