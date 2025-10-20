@@ -1,4 +1,5 @@
 import LoginForm from "@/components/login-form";
+import Logo from "@/components/logo";
 import {
   Card,
   CardContent,
@@ -6,15 +7,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { APP_NAME } from "@/constants";
 
 export default function Authentication() {
   return (
     <div className="h-screen w-full flex items-center justify-center">
       <div>
-        <h1 className="text-center text-2xl font-bold mb-12">Note Taker</h1>
-        <Card className="w-[480px]">
+        <div className="flex items-center justify-center mb-4">
+          <Logo />
+        </div>
+        <Card className="w-[320px] lg:w-[480px]">
           <CardHeader>
-            <CardTitle>Login to NoteTaker</CardTitle>
+            <CardTitle>Login to {APP_NAME}</CardTitle>
             <CardDescription>
               Enter your email below to receive a magic link
             </CardDescription>

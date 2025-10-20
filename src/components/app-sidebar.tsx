@@ -13,13 +13,13 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
-import { Text } from "./ui/text";
+import Logo from "./logo";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar {...props}>
       <SidebarHeader>
-        <Text component="h1">Note Taker App</Text>
+        <Logo />
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
