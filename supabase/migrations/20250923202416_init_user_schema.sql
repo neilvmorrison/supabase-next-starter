@@ -42,22 +42,22 @@ AS $function$begin
     new.raw_user_meta_data->>'last_name',
     new.email,
     (ARRAY[
-      '#F97316', 
-      '#F59E0B',  
-      '#EAB308',  
-      '#84CC16',  
-      '#22C55E',  
-      '#10B981',  
-      '#14B8A6',  
-      '#06B6D4',  
-      '#0EA5E9',  
-      '#3B82F6',  
-      '#6366F1',  
-      '#8B5CF6',  
-      '#A855F7',  
-      '#D946EF',  
-      '#EC4899',  
-      '#F43F5E'   
+      'orange', 
+      'amber',  
+      'yellow',  
+      'lime',  
+      'green',  
+      'emerald',  
+      'teal',  
+      'cyan',  
+      'sky',  
+      'blue',  
+      'indigo',  
+      'violet',  
+      'purple',  
+      'fuchsia',  
+      'pink',  
+      'rose'   
     ])[floor(random() * 16) + 1]
   );
   return new;

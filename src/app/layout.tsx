@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import { APP_NAME } from "../constants/index";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,8 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Note Taker",
-  description: "A place to centralize, organize and ideate",
+  title: APP_NAME,
+  description:
+    "A NextJS + Supabase starter with configured magic link authentication and user-management",
 };
 
 export default function RootLayout({

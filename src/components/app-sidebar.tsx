@@ -17,6 +17,7 @@ import Logo from "./logo";
 import { UserProfile } from "@/lib/user_profiles/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Text } from "@/components/ui/text";
+import { cn, getAvatarColorClass } from "@/lib/utils";
 
 interface IApplicationSidebarProps
   extends React.ComponentProps<typeof Sidebar> {
@@ -27,8 +28,6 @@ export function AppSidebar({
   user_profile,
   ...props
 }: IApplicationSidebarProps) {
-  const avatarColor = user_profile.avatar_color || "#ff4a55";
-
   return (
     <Sidebar {...props}>
       <SidebarHeader>
@@ -53,11 +52,13 @@ export function AppSidebar({
         className="bg-card p-2.5 md:p-3 flex gap-2 items-center border-t"
         href="/profile"
       >
-        <Avatar className="w-8 h-8 md:w-10 md:h-10">
+        <Avatar className="w-8 h-8 md:w-10 md:h-10" activeColor="green">
           <AvatarImage src={user_profile?.avatar_url ?? ""} />
           <AvatarFallback
-            className="text-sm font-semibold"
-            style={{ backgroundColor: avatarColor }}
+            className={cn(
+              "text-sm font-semibold",
+              getAvatarColorClass(user_profile.avatar_color)
+            )}
           >
             {user_profile?.first_name?.[0] || ""}
             {user_profile?.last_name?.[0] || ""}
