@@ -14,7 +14,7 @@ interface IAvatarProps
 
 function Avatar({
   className,
-  isActive = true,
+  isActive = false,
   activeColor,
   ...props
 }: IAvatarProps) {
