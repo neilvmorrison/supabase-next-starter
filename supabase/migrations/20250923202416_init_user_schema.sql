@@ -7,7 +7,9 @@ create table "public"."user_profiles" (
     "last_name" text,
     "middle_name" text,
     "email" text not null,
-    "auth_user_id" uuid
+    "auth_user_id" uuid,
+    "avatar_url" text,
+    "avatar_color" text
 );
 
 CREATE INDEX idx_user_profiles_auth_user_id ON public.user_profiles USING btree (auth_user_id);
@@ -33,12 +35,30 @@ CREATE OR REPLACE FUNCTION public.handle_new_user()
  LANGUAGE plpgsql
  SECURITY DEFINER
 AS $function$begin
-  insert into public.user_profiles (auth_user_id, first_name, last_name, email)
+  insert into public.user_profiles (auth_user_id, first_name, last_name, email, avatar_color)
   values (
     new.id,
     new.raw_user_meta_data->>'first_name',
     new.raw_user_meta_data->>'last_name',
-    new.email
+    new.email,
+    (ARRAY[
+      '#F97316', 
+      '#F59E0B',  
+      '#EAB308',  
+      '#84CC16',  
+      '#22C55E',  
+      '#10B981',  
+      '#14B8A6',  
+      '#06B6D4',  
+      '#0EA5E9',  
+      '#3B82F6',  
+      '#6366F1',  
+      '#8B5CF6',  
+      '#A855F7',  
+      '#D946EF',  
+      '#EC4899',  
+      '#F43F5E'   
+    ])[floor(random() * 16) + 1]
   );
   return new;
 end;$function$
@@ -85,3 +105,8 @@ grant trigger on table "public"."user_profiles" to "service_role";
 grant truncate on table "public"."user_profiles" to "service_role";
 
 grant update on table "public"."user_profiles" to "service_role";
+
+-- Create trigger to automatically create user profile when new user signs up
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();

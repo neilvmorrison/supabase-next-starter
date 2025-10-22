@@ -8,6 +8,7 @@ import * as Md from "react-icons/md";
 import * as Fa from "react-icons/fa";
 import { IconBaseProps } from "react-icons/lib";
 import { GiWeightLiftingUp } from "react-icons/gi";
+import { TbBrandNextjs } from "react-icons/tb";
 
 import { cn } from "@/lib/utils";
 
@@ -26,6 +27,7 @@ export type IconNames =
   | "light_mode"
   | "user"
   | "alert"
+  | "weights"
   | "logo";
 
 interface BaseIconProps {
@@ -85,8 +87,10 @@ export default function Icon({
         return Fa.FaUser;
       case "alert":
         return BiError;
-      case "logo":
+      case "weights":
         return GiWeightLiftingUp;
+      case "logo":
+        return TbBrandNextjs;
 
       default:
         console.warn(`Icon ${name} not found`);

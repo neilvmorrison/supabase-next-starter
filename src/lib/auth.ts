@@ -1,13 +1,5 @@
 import { createClient } from "./supabase/server";
-
-export interface UserProfile {
-  id: string;
-  email: string;
-  first_name: string | null;
-  last_name: string | null;
-  created_at: string;
-  updated_at: string;
-}
+import { UserProfile } from "./user_profiles/types";
 
 export interface AuthUser {
   id: string;
@@ -18,18 +10,24 @@ export interface AuthUser {
   };
 }
 
-export async function getCurrentUser(): Promise<AuthUser | null> {
+export async function getCurrentUser(): Promise<UserProfile | null> {
   const supabase = await createClient();
   const {
     data: { user },
     error,
   } = await supabase.auth.getUser();
 
-  if (error || !user) {
+  const { data: user_profile, error: up_error } = await supabase
+    .from("user_profiles")
+    .select("*")
+    .eq("auth_user_id", user?.id)
+    .single();
+
+  if (error || !user || up_error || !user_profile) {
     return null;
   }
 
-  return user as AuthUser;
+  return user_profile;
 }
 
 export async function getUserProfile(
