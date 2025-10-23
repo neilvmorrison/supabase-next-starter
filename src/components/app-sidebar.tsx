@@ -11,13 +11,14 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-} from "@/components/ui/sidebar";
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Text as UIText,
+} from "./ui";
 import Link from "next/link";
-import Logo from "./logo";
+import { Logo } from "./logo";
 import { UserProfile } from "@/lib/user_profiles/types";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Text } from "@/components/ui/text";
-import { cn, getAvatarColorClass, getAvatarTextColorClass } from "@/lib/utils";
 
 interface IApplicationSidebarProps
   extends React.ComponentProps<typeof Sidebar> {
@@ -55,23 +56,20 @@ export function AppSidebar({
         <Avatar className="w-8 h-8 md:w-10 md:h-10" activeColor="green">
           <AvatarImage src={user_profile?.avatar_url ?? ""} />
           <AvatarFallback
-            className={cn(
-              "text-sm font-semibold",
-              getAvatarColorClass(user_profile.avatar_color),
-              getAvatarTextColorClass(user_profile.avatar_color)
-            )}
+            avatarColor={user_profile.avatar_color}
+            className="text-sm font-semibold"
           >
             {user_profile?.first_name?.[0] || ""}
             {user_profile?.last_name?.[0] || ""}
           </AvatarFallback>
         </Avatar>
         <div className="overflow-hidden">
-          <Text className="text-sm font-medium truncate">
+          <UIText className="text-sm font-medium truncate">
             {user_profile?.first_name} {user_profile?.last_name}
-          </Text>
-          <Text className="text-xs truncate" dimmed>
+          </UIText>
+          <UIText className="text-xs truncate" dimmed>
             {user_profile?.email}
-          </Text>
+          </UIText>
         </div>
       </Link>
     </Sidebar>

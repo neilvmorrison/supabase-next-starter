@@ -1,12 +1,12 @@
-import LoginForm from "@/components/login-form";
-import Logo from "@/components/logo";
 import {
+  LoginForm,
+  Logo,
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/components";
 import { APP_NAME } from "@/constants";
 
 export default function Authentication() {

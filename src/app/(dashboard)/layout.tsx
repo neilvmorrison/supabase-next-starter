@@ -1,19 +1,17 @@
-import { AppSidebar } from "@/components/app-sidebar";
-import LogoutButton from "@/components/logout-button";
 import {
+  AppSidebar,
+  LogoutButton,
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { Separator } from "@/components/ui/separator";
-import {
+  Separator,
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from "@/components/ui/sidebar";
+} from "@/components";
 import { getCurrentUser } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { ReactNode } from "react";

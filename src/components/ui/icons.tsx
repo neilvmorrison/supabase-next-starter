@@ -50,7 +50,7 @@ interface SVGIconProps
 
 type IIconProps = StandardIconProps | SVGIconProps;
 
-export default function Icon({
+export function Icon({
   name,
   size = 20,
   className,

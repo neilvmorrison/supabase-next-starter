@@ -1,14 +1,18 @@
 "use client";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
+import {
+  Button,
+  Input,
+  Label,
+  Spinner,
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Icon,
+} from "./ui";
 import { useForm } from "@/hooks/use-form";
 import { useDebouncedEmailCheck } from "@/hooks/use-debounced-email-check";
 import { useState } from "react";
 import { signInWithMagicLink } from "@/lib/auth-client";
-import { Spinner } from "./ui/spinner";
-import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
-import Icon from "./ui/icons";
 
 interface FormValues extends Record<string, unknown> {
   email: string;
@@ -16,7 +20,7 @@ interface FormValues extends Record<string, unknown> {
   lastName: string;
 }
 
-export default function LoginForm() {
+export function LoginForm() {
   const [showNameFields, setShowNameFields] = useState(false);
   const [showEmailScreen, setShowEmailScreen] = useState(false);
   const [showErrorScreen, setShowErrorScreen] = useState(false);

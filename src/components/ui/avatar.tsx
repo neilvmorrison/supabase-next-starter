@@ -3,7 +3,12 @@
 import * as React from "react";
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
 
-import { cn, getAvatarBorderColorClass } from "@/lib/utils";
+import {
+  cn,
+  getAvatarBorderColorClass,
+  getAvatarColorClass,
+  getAvatarTextColorClass,
+} from "@/lib/utils";
 
 interface IAvatarProps
   extends React.ComponentProps<typeof AvatarPrimitive.Root> {
@@ -66,15 +71,23 @@ function AvatarImage({
   );
 }
 
+interface IAvatarFallbackProps
+  extends React.ComponentProps<typeof AvatarPrimitive.Fallback> {
+  avatarColor?: string | null;
+}
+
 function AvatarFallback({
   className,
+  avatarColor,
   ...props
-}: React.ComponentProps<typeof AvatarPrimitive.Fallback>) {
+}: IAvatarFallbackProps) {
   return (
     <AvatarPrimitive.Fallback
       data-slot="avatar-fallback"
       className={cn(
-        "bg-muted flex size-full items-center justify-center rounded-full",
+        "flex size-full items-center justify-center rounded-full",
+        getAvatarColorClass(avatarColor),
+        getAvatarTextColorClass(avatarColor),
         className
       )}
       {...props}

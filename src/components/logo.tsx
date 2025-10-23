@@ -1,13 +1,12 @@
 import { APP_NAME } from "@/constants";
-import Icon from "./ui/icons";
-import { Text } from "./ui/text";
+import { Icon, Text } from "./ui";
 import Link from "next/link";
 
 interface ILogoProps {
   asLink?: boolean;
 }
 
-export default function Logo({ asLink = false }: ILogoProps) {
+export function Logo({ asLink = false }: ILogoProps) {
   const Component = asLink ? Link : "div";
   return (
     <Component className="flex items-center gap-2" href="/">

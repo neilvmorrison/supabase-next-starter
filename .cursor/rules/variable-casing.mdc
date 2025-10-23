@@ -1,0 +1,9 @@
+---
+globs: ["**/*.ts", "**/*.tsx"]
+alwaysApply: false
+---
+
+- use camelCasing for react variables and hooks
+- user snake_casing for all 'use server' or lib/, constants/ or utils/ methods.
+- use PascalCase for all interfaces and types
+- use tailwind to style
