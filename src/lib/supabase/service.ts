@@ -1,5 +1,5 @@
 import { SupabaseClient } from "@supabase/supabase-js";
-import { Database, Tables } from "./types/database";
+import { Database, Tables, TablesInsert, TablesUpdate } from "./types/database";
 import { createClient } from "./client";
 import { createClient as createServerClient } from "./server";
 
@@ -29,10 +29,47 @@ export interface QueryOptions {
   };
 }
 
+export interface WhereClause {
+  [key: string]: unknown;
+}
+
+export interface CreateOptions {
+  returning?: boolean;
+}
+
+export interface UpdateOptions {
+  returning?: boolean;
+}
+
+export interface DeleteOptions {
+  soft?: boolean;
+  returning?: boolean;
+}
+
 export interface QueryResult<T> {
   data: T[] | null;
   error: DatabaseError | null;
   count?: number;
+}
+
+export interface SingleResult<T> {
+  data: T | null;
+  error: DatabaseError | null;
+}
+
+export interface CreateResult<T> {
+  data: T | null;
+  error: DatabaseError | null;
+}
+
+export interface UpdateResult<T> {
+  data: T | null;
+  error: DatabaseError | null;
+}
+
+export interface DeleteResult<T> {
+  data: T | null;
+  error: DatabaseError | null;
 }
 
 export class DatabaseService {
@@ -97,30 +134,59 @@ export class DatabaseService {
     };
   }
 
+  private buildWhereClause(
+    query: ReturnType<SupabaseClient<Database>["from"]>,
+    where?: WhereClause
+  ): ReturnType<SupabaseClient<Database>["from"]> {
+    if (!where) return query;
+
+    Object.entries(where).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        query = query.eq(key, value) as ReturnType<
+          SupabaseClient<Database>["from"]
+        >;
+      }
+    });
+
+    return query;
+  }
+
+  private buildQuery<T extends TableName>(
+    table: T,
+    where?: WhereClause,
+    options?: QueryOptions
+  ): ReturnType<SupabaseClient<Database>["from"]> {
+    let query = this.client.from(table).select("*");
+
+    query = this.buildWhereClause(query, where);
+
+    if (options?.orderBy) {
+      query = query.order(options.orderBy.column, {
+        ascending: options.orderBy.ascending ?? true,
+      });
+    }
+
+    if (options?.limit) {
+      query = query.limit(options.limit);
+    }
+
+    if (options?.offset) {
+      query = query.range(
+        options.offset,
+        options.offset + (options.limit || 10) - 1
+      );
+    }
+
+    return query;
+  }
+
   async findMany<T extends TableName>(
     table: T,
+    where?: WhereClause,
     options?: QueryOptions
   ): Promise<QueryResult<Tables<T>>> {
     try {
-      let query = this.client.from(table).select("*");
-
-      if (options?.orderBy) {
-        query = query.order(options.orderBy.column, {
-          ascending: options.orderBy.ascending ?? true,
-        });
-      }
-
-      if (options?.limit) {
-        query = query.limit(options.limit);
-      }
-
-      if (options?.offset) {
-        query = query.range(
-          options.offset,
-          options.offset + (options.limit || 10) - 1
-        );
-      }
-
+      const query = this.buildQuery(table, where, options);
       const { data, error, count } = await query;
 
       if (error) {
@@ -131,6 +197,123 @@ export class DatabaseService {
         data: data as Tables<T>[],
         error: null,
         count: count || undefined,
+      };
+    } catch (error) {
+      return { data: null, error: this.handleError(error) };
+    }
+  }
+
+  async findOne<T extends TableName>(
+    table: T,
+    where: WhereClause
+  ): Promise<SingleResult<Tables<T>>> {
+    try {
+      const query = this.buildQuery(table, where, { limit: 1 });
+      const { data, error } = await query;
+
+      if (error) {
+        return { data: null, error: this.handleError(error) };
+      }
+
+      return {
+        data: (data?.[0] as Tables<T>) || null,
+        error: null,
+      };
+    } catch (error) {
+      return { data: null, error: this.handleError(error) };
+    }
+  }
+
+  async findOneOrThrow<T extends TableName>(
+    table: T,
+    where: WhereClause
+  ): Promise<Tables<T>> {
+    const result = await this.findOne(table, where);
+
+    if (result.error) {
+      throw new Error(result.error.message);
+    }
+
+    if (!result.data) {
+      throw new Error(`No record found in ${table} with the given criteria`);
+    }
+
+    return result.data;
+  }
+
+  async create<T extends TableName>(
+    table: T,
+    data: TablesInsert<T>
+  ): Promise<CreateResult<Tables<T>>> {
+    try {
+      const query = this.client.from(table).insert(data as never);
+
+      const { data: result, error } = await query;
+
+      if (error) {
+        return { data: null, error: this.handleError(error) };
+      }
+
+      return {
+        data: (result?.[0] as Tables<T>) || null,
+        error: null,
+      };
+    } catch (error) {
+      return { data: null, error: this.handleError(error) };
+    }
+  }
+
+  async update<T extends TableName>(
+    table: T,
+    where: WhereClause,
+    data: TablesUpdate<T>
+  ): Promise<UpdateResult<Tables<T>>> {
+    try {
+      let query = this.client.from(table).update(data as never);
+
+      query = this.buildWhereClause(query, where);
+
+      const { data: result, error } = await query;
+
+      if (error) {
+        return { data: null, error: this.handleError(error) };
+      }
+
+      return {
+        data: (result?.[0] as Tables<T>) || null,
+        error: null,
+      };
+    } catch (error) {
+      return { data: null, error: this.handleError(error) };
+    }
+  }
+
+  async delete<T extends TableName>(
+    table: T,
+    where: WhereClause,
+    options?: DeleteOptions
+  ): Promise<DeleteResult<Tables<T>>> {
+    try {
+      if (options?.soft) {
+        const updateData = {
+          deleted_at: new Date().toISOString(),
+        } as TablesUpdate<T>;
+        return this.update(table, where, updateData);
+      }
+
+      let query = this.client.from(table).delete();
+
+      query = this.buildWhereClause(query, where);
+
+      const { data: result, error } = await query;
+
+      if (error) {
+        return { data: null, error: this.handleError(error) };
+      }
+
+      return {
+        data: (result?.[0] as Tables<T>) || null,
+        error: null,
       };
     } catch (error) {
       return { data: null, error: this.handleError(error) };
