@@ -47,6 +47,24 @@ export function AppSidebar({
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Error Management</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/error-logs">Error Dashboard</Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/test-errors">Test Errors</Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
       <SidebarRail />
       <Link

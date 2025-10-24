@@ -29,9 +29,9 @@ export interface QueryOptions {
   };
 }
 
-export interface WhereClause {
-  [key: string]: unknown;
-}
+export type WhereClause<T extends TableName> = {
+  [K in keyof Tables<T>]?: Tables<T>[K];
+};
 
 export interface CreateOptions {
   returning?: boolean;
@@ -134,31 +134,20 @@ export class DatabaseService {
     };
   }
 
-  private buildWhereClause(
-    query: ReturnType<SupabaseClient<Database>["from"]>,
-    where?: WhereClause
-  ): ReturnType<SupabaseClient<Database>["from"]> {
-    if (!where) return query;
-
-    Object.entries(where).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
-        query = query.eq(key, value) as ReturnType<
-          SupabaseClient<Database>["from"]
-        >;
-      }
-    });
-
-    return query;
-  }
-
   private buildQuery<T extends TableName>(
     table: T,
-    where?: WhereClause,
+    where?: WhereClause<T>,
     options?: QueryOptions
-  ): ReturnType<SupabaseClient<Database>["from"]> {
+  ) {
     let query = this.client.from(table).select("*");
 
-    query = this.buildWhereClause(query, where);
+    if (where) {
+      Object.entries(where).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          query = query.eq(key, value);
+        }
+      });
+    }
 
     if (options?.orderBy) {
       query = query.order(options.orderBy.column, {
@@ -182,7 +171,7 @@ export class DatabaseService {
 
   async findMany<T extends TableName>(
     table: T,
-    where?: WhereClause,
+    where?: WhereClause<T>,
     options?: QueryOptions
   ): Promise<QueryResult<Tables<T>>> {
     try {
@@ -205,7 +194,7 @@ export class DatabaseService {
 
   async findOne<T extends TableName>(
     table: T,
-    where: WhereClause
+    where: WhereClause<T>
   ): Promise<SingleResult<Tables<T>>> {
     try {
       const query = this.buildQuery(table, where, { limit: 1 });
@@ -226,7 +215,7 @@ export class DatabaseService {
 
   async findOneOrThrow<T extends TableName>(
     table: T,
-    where: WhereClause
+    where: WhereClause<T>
   ): Promise<Tables<T>> {
     const result = await this.findOne(table, where);
 
@@ -265,13 +254,19 @@ export class DatabaseService {
 
   async update<T extends TableName>(
     table: T,
-    where: WhereClause,
+    where: WhereClause<T>,
     data: TablesUpdate<T>
   ): Promise<UpdateResult<Tables<T>>> {
     try {
       let query = this.client.from(table).update(data as never);
 
-      query = this.buildWhereClause(query, where);
+      if (where) {
+        Object.entries(where).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            query = query.eq(key, value);
+          }
+        });
+      }
 
       const { data: result, error } = await query;
 
@@ -290,7 +285,7 @@ export class DatabaseService {
 
   async delete<T extends TableName>(
     table: T,
-    where: WhereClause,
+    where: WhereClause<T>,
     options?: DeleteOptions
   ): Promise<DeleteResult<Tables<T>>> {
     try {
@@ -303,7 +298,13 @@ export class DatabaseService {
 
       let query = this.client.from(table).delete();
 
-      query = this.buildWhereClause(query, where);
+      if (where) {
+        Object.entries(where).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            query = query.eq(key, value);
+          }
+        });
+      }
 
       const { data: result, error } = await query;
 

@@ -13,7 +13,7 @@ import {
 } from "./types";
 
 export async function find_many_user_profiles(
-  where?: WhereClause,
+  where?: WhereClause<"user_profiles">,
   options?: QueryOptions
 ): Promise<FindManyUserProfilesResult> {
   try {
@@ -42,7 +42,7 @@ export async function find_many_user_profiles(
 }
 
 export async function find_one_user_profile(
-  where: WhereClause
+  where: WhereClause<"user_profiles">
 ): Promise<FindOneUserProfileResult> {
   try {
     const db = await createServerDatabaseService();
@@ -69,7 +69,7 @@ export async function find_one_user_profile(
 }
 
 export async function find_one_user_profile_or_throw(
-  where: WhereClause
+  where: WhereClause<"user_profiles">
 ): Promise<UserProfile> {
   const db = await createServerDatabaseService();
   return db.findOneOrThrow("user_profiles", where);
@@ -103,7 +103,7 @@ export async function create_user_profile(
 }
 
 export async function update_user_profile(
-  where: WhereClause,
+  where: WhereClause<"user_profiles">,
   data: TablesUpdate<"user_profiles">
 ): Promise<UpdateUserProfileResult> {
   try {
@@ -131,7 +131,7 @@ export async function update_user_profile(
 }
 
 export async function delete_user_profile(
-  where: WhereClause,
+  where: WhereClause<"user_profiles">,
   soft: boolean = true
 ): Promise<DeleteUserProfileResult> {
   try {

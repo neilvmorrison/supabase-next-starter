@@ -4,6 +4,10 @@ export { Alert, AlertTitle, AlertDescription } from "./alert";
 // Avatar components
 export { Avatar, AvatarImage, AvatarFallback } from "./avatar";
 
+// Badge components
+export { Badge, badgeVariants } from "./badge";
+export type { BadgeProps } from "./badge";
+
 // Breadcrumb components
 export {
   Breadcrumb,

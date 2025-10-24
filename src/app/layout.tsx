@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { APP_NAME } from "../constants/index";
+import { ErrorBoundary, GlobalErrorHandlers } from "@/lib/error_logging";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,7 +44,12 @@ export default function RootLayout({
         />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ErrorBoundary
+          showErrorDetails={process.env.NODE_ENV === "development"}
+        >
+          <GlobalErrorHandlers />
+          <ThemeProvider>{children}</ThemeProvider>
+        </ErrorBoundary>
       </body>
     </html>
   );
