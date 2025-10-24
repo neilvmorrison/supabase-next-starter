@@ -1,6 +1,6 @@
 import { SupabaseClient, User } from "@supabase/supabase-js";
 import { Database } from "../supabase/types/database";
-import { UserProfile } from "../user_profiles/types";
+import { UserProfile, IUserProfileWithInitials } from "../user_profiles/types";
 import {
   find_one_user_profile,
   update_user_profile as update_user_profile_db,
@@ -45,7 +45,13 @@ export class AuthService {
     };
   }
 
-  async get_current_user(): Promise<AuthResult<UserProfile>> {
+  private calculate_initials(user: UserProfile): string {
+    const first_initial = user.first_name?.[0] || "";
+    const last_initial = user.last_name?.[0] || "";
+    return `${first_initial}${last_initial}`.toUpperCase() || "U";
+  }
+
+  async get_current_user(): Promise<AuthResult<IUserProfileWithInitials>> {
     try {
       const {
         data: { user },
@@ -71,7 +77,12 @@ export class AuthService {
           };
         }
 
-        return { data: result.data, error: null };
+        const user_with_initials: IUserProfileWithInitials = {
+          ...result.data,
+          initials: this.calculate_initials(result.data),
+        };
+
+        return { data: user_with_initials, error: null };
       } else {
         const db = createDatabaseService();
         const result = await db.findOne("user_profiles", {
@@ -86,7 +97,12 @@ export class AuthService {
           };
         }
 
-        return { data: result.data, error: null };
+        const user_with_initials: IUserProfileWithInitials = {
+          ...result.data,
+          initials: this.calculate_initials(result.data),
+        };
+
+        return { data: user_with_initials, error: null };
       }
     } catch (error) {
       return { error: this.handleError(error) };

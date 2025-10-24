@@ -8,3 +8,5 @@ export { ThemeProvider } from "./theme-provider";
 // Re-export all UI components for convenience
 export * from "./ui";
 export * from "./server";
+export * from "./avatar-upload-button";
+export * from "./avatar-upload-wrapper";

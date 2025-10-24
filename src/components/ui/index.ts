@@ -108,6 +108,9 @@ export {
 // Skeleton components
 export { Skeleton } from "./skeleton";
 
+// Sonner components
+export { Toaster } from "./sonner";
+
 // Spinner components
 export { Spinner } from "./spinner";
 export type { SpinnerProps } from "./spinner";

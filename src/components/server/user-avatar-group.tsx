@@ -13,8 +13,7 @@ export async function UserAvatarGroup() {
           avatarColor={user_profile.avatar_color}
           className="text-sm font-semibold"
         >
-          {user_profile?.first_name?.[0] || ""}
-          {user_profile?.last_name?.[0] || ""}
+          {user_profile.initials}
         </AvatarFallback>
       </Avatar>
       <div className="overflow-hidden">

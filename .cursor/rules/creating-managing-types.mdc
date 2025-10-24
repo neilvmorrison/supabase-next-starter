@@ -2,5 +2,5 @@
 alwaysApply: true
 ---
 
-- prepend all interfaces with "I"
-- when creating types, ensure that they are located in a /types folder close to where they are used
+1. prepend all interfaces with "I"
+2. when creating types, ensure that they are located in a /types folder close to where they are used

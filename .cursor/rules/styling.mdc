@@ -1,0 +1,5 @@
+---
+alwaysApply: true
+---
+
+1. always apply styling using tailwindcss in accordance with shadcn/ui's components

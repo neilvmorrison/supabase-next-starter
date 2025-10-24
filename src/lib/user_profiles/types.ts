@@ -2,6 +2,10 @@ import { Tables } from "../types";
 
 export type UserProfile = Tables["user_profiles"]["Row"];
 
+export interface IUserProfileWithInitials extends UserProfile {
+  initials: string;
+}
+
 export interface FindManyUserProfilesResult {
   success: boolean;
   data?: UserProfile[];
@@ -30,5 +34,11 @@ export interface UpdateUserProfileResult {
 export interface DeleteUserProfileResult {
   success: boolean;
   data?: UserProfile;
+  error?: string;
+}
+
+export interface FindOneUserProfileWithInitialsResult {
+  success: boolean;
+  data?: IUserProfileWithInitials;
   error?: string;
 }

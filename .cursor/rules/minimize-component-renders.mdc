@@ -1,0 +1,6 @@
+---
+description: for all react components, ensure that they're built in such a way that minimizes rendering
+alwaysApply: false
+---
+
+1. all react component development should aim to minimize rendering and make proper use of memoization etc.

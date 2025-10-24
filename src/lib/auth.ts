@@ -1,7 +1,7 @@
 import { createServerAuthService } from "./auth/service";
-import { UserProfile } from "./user_profiles/types";
+import { UserProfile, IUserProfileWithInitials } from "./user_profiles/types";
 
-export async function getCurrentUser(): Promise<UserProfile | null> {
+export async function getCurrentUser(): Promise<IUserProfileWithInitials | null> {
   const auth_service = await createServerAuthService();
   const result = await auth_service.get_current_user();
 

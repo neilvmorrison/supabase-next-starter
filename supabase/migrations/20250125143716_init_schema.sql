@@ -113,5 +113,115 @@ GRANT TRUNCATE ON TABLE "public"."user_profiles" TO "service_role";
 GRANT UPDATE ON TABLE "public"."user_profiles" TO "service_role";
 
 -- =====================================================
+-- STORAGE BUCKETS
+-- =====================================================
+
+-- Create user_avatars bucket (public, readable by all authenticated users)
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES (
+  'user_avatars',
+  'user_avatars',
+  true,
+  5242880, -- 5MB limit
+  ARRAY['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
+)
+ON CONFLICT (id) DO NOTHING;
+
+-- Create user_uploads bucket (private, users only access their own folder)
+INSERT INTO storage.buckets (id, name, public, file_size_limit)
+VALUES (
+  'user_uploads',
+  'user_uploads',
+  false,
+  52428800 -- 50MB limit
+)
+ON CONFLICT (id) DO NOTHING;
+
+-- =====================================================
+-- STORAGE POLICIES - user_avatars
+-- =====================================================
+
+-- Allow authenticated users to read all avatars
+CREATE POLICY "Authenticated users can view all avatars"
+ON storage.objects FOR SELECT
+TO authenticated
+USING (bucket_id = 'user_avatars');
+
+-- Allow authenticated users to upload their own avatar
+CREATE POLICY "Users can upload their own avatar"
+ON storage.objects FOR INSERT
+TO authenticated
+WITH CHECK (
+  bucket_id = 'user_avatars' AND
+  (storage.foldername(name))[1] = auth.uid()::text
+);
+
+-- Allow users to update their own avatar
+CREATE POLICY "Users can update their own avatar"
+ON storage.objects FOR UPDATE
+TO authenticated
+USING (
+  bucket_id = 'user_avatars' AND
+  (storage.foldername(name))[1] = auth.uid()::text
+)
+WITH CHECK (
+  bucket_id = 'user_avatars' AND
+  (storage.foldername(name))[1] = auth.uid()::text
+);
+
+-- Allow users to delete their own avatar
+CREATE POLICY "Users can delete their own avatar"
+ON storage.objects FOR DELETE
+TO authenticated
+USING (
+  bucket_id = 'user_avatars' AND
+  (storage.foldername(name))[1] = auth.uid()::text
+);
+
+-- =====================================================
+-- STORAGE POLICIES - user_uploads
+-- =====================================================
+
+-- Allow users to read their own files
+CREATE POLICY "Users can view their own uploads"
+ON storage.objects FOR SELECT
+TO authenticated
+USING (
+  bucket_id = 'user_uploads' AND
+  (storage.foldername(name))[1] = auth.uid()::text
+);
+
+-- Allow users to upload to their own folder
+CREATE POLICY "Users can upload to their own folder"
+ON storage.objects FOR INSERT
+TO authenticated
+WITH CHECK (
+  bucket_id = 'user_uploads' AND
+  (storage.foldername(name))[1] = auth.uid()::text
+);
+
+-- Allow users to update their own files
+CREATE POLICY "Users can update their own uploads"
+ON storage.objects FOR UPDATE
+TO authenticated
+USING (
+  bucket_id = 'user_uploads' AND
+  (storage.foldername(name))[1] = auth.uid()::text
+)
+WITH CHECK (
+  bucket_id = 'user_uploads' AND
+  (storage.foldername(name))[1] = auth.uid()::text
+);
+
+-- Allow users to delete their own files
+CREATE POLICY "Users can delete their own uploads"
+ON storage.objects FOR DELETE
+TO authenticated
+USING (
+  bucket_id = 'user_uploads' AND
+  (storage.foldername(name))[1] = auth.uid()::text
+);
+
+-- =====================================================
 -- MIGRATION COMPLETE
 -- =====================================================
