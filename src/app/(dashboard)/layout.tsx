@@ -13,8 +13,14 @@ import {
   SidebarTrigger,
 } from "@/components";
 import { getCurrentUser } from "@/lib/auth";
+import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { ReactNode } from "react";
+
+export const metadata: Metadata = {
+  title: "Profile",
+  description: "The profile page for the current logged-in user",
+};
 
 export default async function DashboardLayout({
   children,
@@ -27,7 +33,7 @@ export default async function DashboardLayout({
   }
   return (
     <SidebarProvider>
-      <AppSidebar user_profile={currentUser} />
+      <AppSidebar />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger className="-ml-1" />

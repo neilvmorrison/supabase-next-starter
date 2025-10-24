@@ -7,3 +7,4 @@ export { ThemeProvider } from "./theme-provider";
 
 // Re-export all UI components for convenience
 export * from "./ui";
+export * from "./server";
