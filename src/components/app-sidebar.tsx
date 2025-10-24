@@ -1,15 +1,11 @@
 import * as React from "react";
 
 import {
+  Icon,
   Sidebar,
   SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
-  SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem,
   SidebarRail,
 } from "./ui";
 import Link from "next/link";
@@ -22,7 +18,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <Logo asLink />
       </SidebarHeader>
-      <SidebarContent></SidebarContent>
+      <SidebarContent className="px-2 mt-4">
+        <SidebarMenuButton asChild>
+          <span>
+            <Icon name="dashboard" />
+            <Link href="/">Dashboard</Link>
+          </span>
+        </SidebarMenuButton>
+      </SidebarContent>
       <SidebarRail />
       <Link
         className="bg-card p-2.5 md:p-3 flex gap-2 items-center border-t"

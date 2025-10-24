@@ -8,7 +8,7 @@ import * as Md from "react-icons/md";
 import * as Fa from "react-icons/fa";
 import { IconBaseProps } from "react-icons/lib";
 import { GiWeightLiftingUp } from "react-icons/gi";
-import { TbBrandNextjs } from "react-icons/tb";
+import { TbBrandNextjs, TbDashboard } from "react-icons/tb";
 
 import { cn } from "@/lib/utils";
 
@@ -28,6 +28,7 @@ export type IconNames =
   | "user"
   | "alert"
   | "weights"
+  | "dashboard"
   | "logo";
 
 interface BaseIconProps {
@@ -59,7 +60,6 @@ export function Icon({
 }: IIconProps) {
   const getIconComponent = (): IconType => {
     switch (name) {
-      // Existing icons
       case "email_check":
         return LuMailCheck;
       case "email_x":
@@ -91,6 +91,8 @@ export function Icon({
         return GiWeightLiftingUp;
       case "logo":
         return TbBrandNextjs;
+      case "dashboard":
+        return TbDashboard;
 
       default:
         console.warn(`Icon ${name} not found`);
