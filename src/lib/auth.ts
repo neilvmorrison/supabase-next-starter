@@ -17,10 +17,14 @@ export async function getCurrentUser(): Promise<UserProfile | null> {
     error,
   } = await supabase.auth.getUser();
 
+  if (!user) {
+    return null;
+  }
+
   const { data: user_profile, error: up_error } = await supabase
     .from("user_profiles")
     .select("*")
-    .eq("auth_user_id", user?.id)
+    .eq("auth_user_id", user.id)
     .single();
 
   if (error || !user || up_error || !user_profile) {
