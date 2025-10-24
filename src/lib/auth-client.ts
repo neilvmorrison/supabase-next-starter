@@ -1,64 +1,37 @@
 "use client";
 
-import { createClient } from "./supabase/client";
+import { createAuthService } from "./auth/service";
+import { Tables } from "./supabase/types/database";
 
-export interface UserProfile {
-  id: string;
-  email: string;
-  first_name: string | null;
-  last_name: string | null;
-  created_at: string;
-  updated_at: string;
-}
+export type UserProfile = Tables<"user_profiles">;
 
 export async function signInWithMagicLink(
   email: string,
   userData?: { first_name?: string; last_name?: string }
 ): Promise<{ error: Error | null }> {
-  const supabase = createClient();
+  const auth_service = createAuthService();
+  const result = await auth_service.sign_in_with_magic_link(email, userData);
 
-  const options: { emailRedirectTo: string; data?: object } = {
-    emailRedirectTo: `${window.location.origin}/authentication/confirm`,
-  };
-
-  if (userData?.first_name || userData?.last_name) {
-    options.data = {
-      first_name: userData.first_name,
-      last_name: userData.last_name,
-    };
-  }
-
-  const { error } = await supabase.auth.signInWithOtp({
-    email,
-    options,
-  });
-
-  return { error };
+  return { error: result.error ? new Error(result.error.message) : null };
 }
 
 export async function updateUserProfile(
   userId: string,
   updates: { first_name?: string; last_name?: string }
 ): Promise<UserProfile | null> {
-  const supabase = createClient();
-  const { data, error } = await supabase
-    .from("user_profiles")
-    .update(updates)
-    .eq("id", userId)
-    .select()
-    .single();
+  const auth_service = createAuthService();
+  const result = await auth_service.update_user_profile(userId, updates);
 
-  if (error || !data) {
+  if (result.error || !result.data) {
     return null;
   }
 
-  return data as UserProfile;
+  return result.data;
 }
 
 export async function signOut(): Promise<{ error: Error | null }> {
-  const supabase = createClient();
+  const auth_service = createAuthService();
+  const result = await auth_service.sign_out();
 
-  const { error } = await supabase.auth.signOut();
-
-  return { error };
+  return { error: result.error ? new Error(result.error.message) : null };
 }

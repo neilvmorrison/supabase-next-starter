@@ -1,87 +1,50 @@
-import { createClient } from "./supabase/server";
+import { createServerAuthService } from "./auth/service";
 import { UserProfile } from "./user_profiles/types";
 
-export interface AuthUser {
-  id: string;
-  email: string;
-  user_metadata: {
-    first_name?: string;
-    last_name?: string;
-  };
-}
-
 export async function getCurrentUser(): Promise<UserProfile | null> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
+  const auth_service = await createServerAuthService();
+  const result = await auth_service.get_current_user();
 
-  if (!user) {
+  if (result.error || !result.data) {
     return null;
   }
 
-  const { data: user_profile, error: up_error } = await supabase
-    .from("user_profiles")
-    .select("*")
-    .eq("auth_user_id", user.id)
-    .single();
-
-  if (error || !user || up_error || !user_profile) {
-    return null;
-  }
-
-  return user_profile;
+  return result.data;
 }
 
 export async function getUserProfile(
   userId: string
 ): Promise<UserProfile | null> {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("user_profiles")
-    .select("*")
-    .eq("id", userId)
-    .single();
+  const auth_service = await createServerAuthService();
+  const result = await auth_service.get_user_profile(userId);
 
-  if (error || !data) {
+  if (result.error || !result.data) {
     return null;
   }
 
-  return data as UserProfile;
+  return result.data;
 }
 
 export async function checkEmailExists(email: string): Promise<boolean> {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("user_profiles")
-    .select("email")
-    .eq("email", email)
-    .maybeSingle();
-
-  return !error && !!data;
+  const auth_service = await createServerAuthService();
+  return auth_service.check_email_exists(email);
 }
 
 export async function updateUserProfile(
   userId: string,
   updates: { first_name?: string; last_name?: string }
 ): Promise<UserProfile | null> {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("user_profiles")
-    .update(updates)
-    .eq("id", userId)
-    .select()
-    .single();
+  const auth_service = await createServerAuthService();
+  const result = await auth_service.update_user_profile(userId, updates);
 
-  if (error || !data) {
+  if (result.error || !result.data) {
     return null;
   }
 
-  return data as UserProfile;
+  return result.data;
 }
 
 export async function signOut() {
-  const supabase = await createClient();
-  await supabase.auth.signOut();
+  const auth_service = await createServerAuthService();
+  await auth_service.sign_out();
 }
