@@ -1,4 +1,12 @@
-import { AvatarUploadWrapper, Card, CardContent } from "@/components";
+import {
+  AvatarUploadWrapper,
+  Button,
+  Card,
+  CardContent,
+  Label,
+  Separator,
+  Text,
+} from "@/components";
 import { getCurrentUser } from "@/lib/auth";
 import { ReactNode } from "react";
 
@@ -23,6 +31,16 @@ export default async function ProfileLayout({ children }: IProfileLayoutProps) {
                 avatarColor={user.avatar_color}
                 size="md"
               />
+              <div>
+                <Text className="font-semibold">
+                  {user.first_name} {user.last_name}
+                </Text>
+                <Text dimmed className="text-xs">
+                  {user.email}
+                </Text>
+              </div>
+              <Separator />
+              <Button variant="destructive">Delete Profile</Button>
             </div>
           </CardContent>
         </Card>

@@ -30,7 +30,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS user_profiles_pkey ON public.user_profiles USI
 
 -- User profiles constraints
 ALTER TABLE "public"."user_profiles" ADD CONSTRAINT "user_profiles_pkey" PRIMARY KEY USING INDEX "user_profiles_pkey";
-ALTER TABLE "public"."user_profiles" ADD CONSTRAINT "user_profiles_auth_user_id_fkey" FOREIGN KEY (auth_user_id) REFERENCES auth.users(id) NOT VALID;
+ALTER TABLE "public"."user_profiles" ADD CONSTRAINT "user_profiles_auth_user_id_fkey" FOREIGN KEY (auth_user_id) REFERENCES auth.users(id) ON DELETE CASCADE NOT VALID;
 ALTER TABLE "public"."user_profiles" VALIDATE CONSTRAINT "user_profiles_auth_user_id_fkey";
 ALTER TABLE "public"."user_profiles" ADD CONSTRAINT "user_profiles_email_key" UNIQUE USING INDEX "user_profiles_email_key";
 
