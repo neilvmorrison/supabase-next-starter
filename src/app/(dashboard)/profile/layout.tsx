@@ -3,7 +3,6 @@ import {
   Button,
   Card,
   CardContent,
-  Label,
   Separator,
   Text,
 } from "@/components";
