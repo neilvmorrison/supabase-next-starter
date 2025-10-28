@@ -1,0 +1,5 @@
+---
+alwaysApply: true
+---
+
+1. this project uses yarn as its package manager
